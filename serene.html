@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <title>Serene</title>
+</head>
+
+<div id="logoTitle">
+    <article>
+        <img src="img/sereneWhite.png" alt="Serene logo" class="logo">
+    </article>
+    <article>
+        <h1 id="slogan">Serene: the Life Balancer</h1>
+    </article>
+</div>
+
+<div id="taskList">
+    <form id="inputFields" v-on:submit.prevent="addItem">
+        <label for="newItem">Add a task</label>
+        <input
+                required
+                v-model="newItemText"
+                id="newItem"
+                placeholder="Eg book hotel rooms"
+        >
+        <label for="newDate">Date</label>
+        <input
+                type="date"
+                required
+                v-model="newItemDate"
+                id="newDate"
+                placeholder="YYYY-MM-DD"
+        >
+        <button id="add">Add</button>
+        <p id="emptyList" v-if="items.length < 1">Add something to your list!</p>
+    </form>
+    <button id="priority" v-if="items.length > 0" v-on:click="prio">Hide non-priority tasks</button>
+    <ul>
+        <li v-if="hide === true"
+                is="item"
+                v-for="(item, index) in items"
+                v-bind:style="{color: item.priorityColor}"
+                v-bind:key="item.id"
+                v-bind:text="item.text + ' ' + item.date"
+                v-bind:date="item.id + item.date"
+
+                v-on:remove="items.splice(index, 1)"
+                v-on:priority="item.priority = true; item.priorityColor = 'red'"
+                v-on:notpriority="item.priority = false; item.priorityColor = 'black'"
+        ></li>
+        <li v-if="hide === false && item.priority === true"
+                is="item"
+                v-for="(item, index) in items"
+                v-bind:style="{color: item.priorityColor}"
+                v-bind:key="item.id"
+                v-bind:text="item.text + ' ' + item.date"
+                v-bind:date="item.id + item.date"
+
+                v-on:remove="items.splice(index, 1)"
+                v-on:priority="item.priority = true; item.priorityColor = 'red'"
+                v-on:notpriority="item.priority = false; item.priorityColor = 'black'"
+        ></li>
+    </ul>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script>
+    Vue.component('item', {
+        template: `
+    <li id="tasks">
+      {{ text }}
+      {{ priority }}
+      <button class="gridButton" v-on:click="$emit('remove')">Remove</button>
+      <button class="gridButton" v-on:click="$emit('priority')">Make priority</button>
+      <button class="gridButton" v-on:click="$emit('notpriority')">Not priority</button>
+    </li>
+    `,
+        props: ['text', 'date', 'priority']
+    })
+
+    new Vue({
+        el: '#taskList',
+        data: {
+            newItemText: '',
+            newItemDate: '',
+            newItemPriority: false,
+            hide: true,
+            today: new Date(),
+            items: [
+                {
+                    id: 1,
+                    text: 'Complete html Vue project',
+                    date: '2021-04-16',
+                    priority: true,
+                    priorityColor: 'red'
+                },
+                {
+                    id: 2,
+                    text: 'Acquire plane tickets',
+                    date: '2021-03-30',
+                    priority: false,
+                    priorityColor: '#000'
+                },
+                {
+                    id: 3,
+                    text: 'Book airport transfer',
+                    date: '2021-05-01',
+                    priority: false,
+                    priorityColor: '#000'
+                },
+                {
+                    id: 4,
+                    text: 'Get present for the kids',
+                    date: '2021-06-15',
+                    priority: true,
+                    priorityColor: 'red'
+                }
+            ],
+            nextItemId: 5
+        },
+        methods: {
+            addItem: function () {
+                this.items.push({
+                    id: this.nextItemId++,
+                    text: this.newItemText,
+                    date: this.newItemDate.toString(),
+                    priority: false,
+                    priorityColor: 'black'
+                })
+                console.log(this.id)
+                console.log(this.newItemText)
+                console.log(this.newItemDate)
+                console.log(this.newItemPriority)
+                console.log(this.priorityColor)
+                this.newItemText = ''
+                this.newItemNumber = ''
+                this.newItemPriority = false
+                this.newItemPriorityColor = 'black'
+            },
+            prio: function () {
+                if(this.hide === true){
+                    this.hide = false
+                } else if(this.hide === false){
+                    this.hide = true
+                }
+                console.log(this.hide)
+            }
+        }
+    })
+
+
+</script>
+
+<script src="js/js.js"></script>
+<body>
+
+</body>
+</html>
