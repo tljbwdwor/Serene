@@ -15,11 +15,14 @@
     </article>
 </div>
 
+<div id="dateTime"></div><br>
+
 <div id="taskList">
     <form id="inputFields" v-on:submit.prevent="addItem">
         <label for="newItem">Add a task</label>
         <input
                 required
+                type="text"
                 v-model="newItemText"
                 id="newItem"
                 placeholder="Eg book hotel rooms"
@@ -35,15 +38,17 @@
         <button id="add">Add</button>
         <p id="emptyList" v-if="items.length < 1">Add something to your list!</p>
     </form>
-    <button id="priority" v-if="items.length > 0" v-on:click="prio">Hide non-priority tasks</button>
+    <button id="priority" v-if="items.length > 1 && this.hide === true" v-on:click="prio">Hide non-priority tasks</button>
+    <button id="priority2" v-if="items.length > 1 && this.hide === false" v-on:click="prio">Show all tasks</button>
+    <p id="hidden" v-if="items.length > 1 && this.hide === false">Showing priority tasks only!</p>
     <ul>
         <li v-if="hide === true"
                 is="item"
                 v-for="(item, index) in items"
                 v-bind:style="{color: item.priorityColor}"
                 v-bind:key="item.id"
-                v-bind:text="item.text + ' ' + item.date"
-                v-bind:date="item.id + item.date"
+                v-bind:text="' ' + item.text"
+                v-bind:date="item.date"
 
                 v-on:remove="items.splice(index, 1)"
                 v-on:priority="item.priority = true; item.priorityColor = 'red'"
@@ -54,24 +59,36 @@
                 v-for="(item, index) in items"
                 v-bind:style="{color: item.priorityColor}"
                 v-bind:key="item.id"
-                v-bind:text="item.text + ' ' + item.date"
-                v-bind:date="item.id + item.date"
+                v-bind:text="' ' + item.text"
+                v-bind:date="item.date"
 
                 v-on:remove="items.splice(index, 1)"
                 v-on:priority="item.priority = true; item.priorityColor = 'red'"
                 v-on:notpriority="item.priority = false; item.priorityColor = 'black'"
         ></li>
     </ul>
+
+    <article id="controls">
+        <button class="GlobalButton" v-if="items.length > 1" v-on:click="sortByDate">Sort by date</button>
+        <button class="GlobalButton" v-if="items.length > 1" v-on:click="sortById">Sort by order added</button>
+        <button class="GlobalButton" v-if="items.length > 1" v-on:click="sortByPriority">Sort by priority</button>
+        <button class="GlobalButton" v-if="items.length > 0" v-on:click="save">Save List</button>
+        <button class="GlobalButton"  v-on:click="deleteAll">Delete saved data</button>
+    </article>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
 <script>
+    let today = new Date();
+    let fullDate = 'Current date: ' + today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate();
+    document.getElementById("dateTime").innerHTML = fullDate;
+
+
     Vue.component('item', {
         template: `
     <li id="tasks">
-      {{ text }}
-      {{ priority }}
+      {{ date + text }}
       <button class="gridButton" v-on:click="$emit('remove')">Remove</button>
       <button class="gridButton" v-on:click="$emit('priority')">Make priority</button>
       <button class="gridButton" v-on:click="$emit('notpriority')">Not priority</button>
@@ -83,9 +100,15 @@
     new Vue({
         el: '#taskList',
         data: {
-            newItemText: '',
-            newItemDate: '',
+            id: null,
+            text: null,
+            date: null,
+            priority: null,
+            priorityColor: null,
+            newItemText: null,
+            newItemDate: null,
             newItemPriority: false,
+            newItemPriorityColor: 'black',
             hide: true,
             today: new Date(),
             items: [
@@ -99,21 +122,21 @@
                 {
                     id: 2,
                     text: 'Acquire plane tickets',
-                    date: '2021-03-30',
+                    date: '2021-06-30',
                     priority: false,
-                    priorityColor: '#000'
+                    priorityColor: 'black'
                 },
                 {
                     id: 3,
                     text: 'Book airport transfer',
-                    date: '2021-05-01',
+                    date: '2022-05-01',
                     priority: false,
-                    priorityColor: '#000'
+                    priorityColor: 'black'
                 },
                 {
                     id: 4,
                     text: 'Get present for the kids',
-                    date: '2021-06-15',
+                    date: '2021-07-15',
                     priority: true,
                     priorityColor: 'red'
                 }
@@ -127,15 +150,15 @@
                     text: this.newItemText,
                     date: this.newItemDate.toString(),
                     priority: false,
-                    priorityColor: 'black'
+                    priorityColor: this.newItemPriorityColor
                 })
-                console.log(this.id)
+                console.log(this.nextItemId)
                 console.log(this.newItemText)
                 console.log(this.newItemDate)
                 console.log(this.newItemPriority)
-                console.log(this.priorityColor)
-                this.newItemText = ''
-                this.newItemNumber = ''
+                console.log(this.newItemPriorityColor)
+                this.newItemText = null
+                this.newItemDate = null
                 this.newItemPriority = false
                 this.newItemPriorityColor = 'black'
             },
@@ -146,6 +169,40 @@
                     this.hide = true
                 }
                 console.log(this.hide)
+            },
+            sortByDate: function (){
+                console.log('sortByDate() called')
+                return this.items.sort((a, b) => new Date(a.date) - new Date(b.date))
+            },
+            sortById: function (){
+                console.log('sortById() called')
+                return this.items.sort((a, b) => Number(a.id) - Number(b.id))
+            },
+            sortByPriority: function (){
+                console.log('sortByPriority() called')
+                return this.items.sort((a, b) => Boolean(b.priority) - Boolean(a.priority))
+            },
+            save: function () {
+                console.log('save pressed')
+                localStorage.setItem('token','token')
+                for (let i = 0; i < this.items.length; i++) {
+
+                    localStorage.setItem('id'+(i+1), this.$data.items.id)
+                    console.log('id in save ' + (i+1) + ': ' + this.$data.items.id)
+                    localStorage.setItem('text'+(i+1), this.text)
+                    console.log('text in save ' + (i+1) + ': ' + this.text)
+                    localStorage.setItem('date'+(i+1), this.date)
+                    console.log('date in save ' + (i+1) + ': ' + this.date)
+                    localStorage.setItem('priority'+(i+1), this.priority)
+                    console.log('priority in save ' + (i+1) + ': ' + this.priority)
+                    localStorage.setItem('priorityColor'+(i+1), this.priorityColor)
+                    console.log('priorityColor in save ' + (i+1) + ': ' + this.priorityColor)
+                }
+            },
+            deleteAll: function () {
+                console.log('delete pressed')
+                localStorage.clear()
+                console.log('data deleted')
             }
         }
     })
@@ -153,7 +210,6 @@
 
 </script>
 
-<script src="js/js.js"></script>
 <body>
 
 </body>

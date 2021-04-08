@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../Serene/.idea/SereneApp.iml" filepath="$PROJECT_DIR$/../Serene/.idea/SereneApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Serene.iml" filepath="$PROJECT_DIR$/.idea/Serene.iml" />
     </modules>
   </component>
 </project>
