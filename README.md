@@ -10,4 +10,5 @@ Tasks can be removed, or prioritised using the corresponding buttons. The progra
 Prioritisation change the colour of the task and switches a boolean variable used to sort the list.
 The list can be sorted by order the tasks are added (id, default view), as well as by date or priority.
 
-Run the project from serene.html in your IDE (Webstorm or Visual Studio Code).
+Run the project in your IDE (Webstorm or Visual Studio Code). 
+Open a local browser from serene.html.
