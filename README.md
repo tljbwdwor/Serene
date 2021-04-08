@@ -3,6 +3,7 @@ School project to design a list-based program using Vue.js
 
 The design is very simple, allowing the user to input tasks with a date.
 Media queries are used to re-format the site for mobile, tablet and desktop depending upon the screen size.
+
 Tasks the user adds are dynamically added to the list, which is presented via a Vue.js component template.
 Tasks can be removed, or prioritised using the corresponding buttons. The program starts with an example list of 4 tasks.
 
