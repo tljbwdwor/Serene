@@ -44,7 +44,7 @@
     <ul>
         <li v-if="hide === true"
                 is="item"
-                v-for="(item, index) in items"
+                v-for="(item, index) in this.items"
                 v-bind:style="{color: item.priorityColor}"
                 v-bind:key="item.id"
                 v-bind:text="' ' + item.text"
@@ -56,7 +56,7 @@
         ></li>
         <li v-if="hide === false && item.priority === true"
                 is="item"
-                v-for="(item, index) in items"
+                v-for="(item, index) in this.items"
                 v-bind:style="{color: item.priorityColor}"
                 v-bind:key="item.id"
                 v-bind:text="' ' + item.text"
@@ -73,7 +73,8 @@
         <button class="GlobalButton" v-if="items.length > 1" v-on:click="sortById">Sort by order added</button>
         <button class="GlobalButton" v-if="items.length > 1" v-on:click="sortByPriority">Sort by priority</button>
         <button class="GlobalButton" v-if="items.length > 0" v-on:click="save">Save List</button>
-        <button class="GlobalButton"  v-on:click="deleteAll">Delete saved data</button>
+        <button class="GlobalButton" v-on:click="load">Load List</button>
+        <button class="GlobalButton" v-on:click="deleteAll">Delete saved data</button>
     </article>
 </div>
 
@@ -185,25 +186,43 @@
             save: function () {
                 console.log('save pressed')
                 localStorage.setItem('token','token')
+                localStorage.clear()
                 for (let i = 0; i < this.items.length; i++) {
 
-                    localStorage.setItem('id'+(i+1), this.$data.items.id)
-                    console.log('id in save ' + (i+1) + ': ' + this.$data.items.id)
-                    localStorage.setItem('text'+(i+1), this.text)
-                    console.log('text in save ' + (i+1) + ': ' + this.text)
-                    localStorage.setItem('date'+(i+1), this.date)
-                    console.log('date in save ' + (i+1) + ': ' + this.date)
-                    localStorage.setItem('priority'+(i+1), this.priority)
-                    console.log('priority in save ' + (i+1) + ': ' + this.priority)
-                    localStorage.setItem('priorityColor'+(i+1), this.priorityColor)
-                    console.log('priorityColor in save ' + (i+1) + ': ' + this.priorityColor)
+                    localStorage.setItem('id'+(i+1), this.items[i].id)
+                    console.log('id in save ' + (i+1) + ': ' + this.items[i].id)
+                    localStorage.setItem('text'+(i+1), this.items[i].text)
+                    console.log('text in save ' + (i+1) + ': ' + this.items[i].text)
+                    localStorage.setItem('date'+(i+1), this.items[i].date)
+                    console.log('date in save ' + (i+1) + ': ' + this.items[i].date)
+                    localStorage.setItem('priority'+(i+1), this.items[i].priority)
+                    console.log('priority in save ' + (i+1) + ': ' + this.items[i].priority)
+                    localStorage.setItem('priorityColor'+(i+1), this.items[i].priorityColor)
+                    console.log('priorityColor in save ' + (i+1) + ': ' + this.items[i].priorityColor)
+                }
+            },
+            load: function () {
+              console.log('load pressed')
+                for (let i = 0; i < (localStorage.length /5); i++) {
+
+                    this.items[i].id = localStorage.getItem('id'+[i+1])
+                    this.items[i].text = localStorage.getItem('text'+[i+1])
+                    this.items[i].date = localStorage.getItem('date'+[i+1])
+                    this.items[i].priority = localStorage.getItem('priority'+[i+1])
+                    this.items[i].priorityColor = localStorage.getItem('priorityColor'+[i+1])
+
+                    console.log(this.items[i].id)
+                    console.log(this.items[i].text)
+                    console.log(this.items[i].date)
+                    console.log(this.items[i].priority)
+                    console.log(this.items[i].priorityColor)
                 }
             },
             deleteAll: function () {
                 console.log('delete pressed')
                 localStorage.clear()
                 console.log('data deleted')
-            }
+            },
         }
     })
 
