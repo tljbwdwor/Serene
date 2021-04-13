@@ -15,9 +15,21 @@
     </article>
 </div>
 
-<div id="dateTime"></div><br>
-
 <div id="taskList">
+
+    <p id="dateTime"></p><br>
+
+<div id="user">
+    <p>{{ message }}</p><br>
+        <label>Enter your name</label><br>
+        <input id="nameInput"
+            v-model="yourName"
+            placeholder="Your name in lights!">
+        <button id="submit" v-on:click="logIn">Submit</button>
+    <br>
+</div>
+
+
     <form id="inputFields" v-on:submit.prevent="addItem">
         <label for="newItem">Add a task</label>
         <input
@@ -76,6 +88,7 @@
         <button class="GlobalButton" v-on:click="load">Load List</button>
         <button class="GlobalButton" v-on:click="deleteAll">Delete saved data</button>-->
     </article>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -85,11 +98,21 @@
     let fullDate = 'Current date: ' + today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate();
     document.getElementById("dateTime").innerHTML = fullDate;
 
+    let hourNow = today.getHours();
+    let greeting;
+    if (hourNow > 18) {
+        greeting = 'Good evening ';
+    } else if (hourNow > 12) {
+        greeting = 'Good afternoon ';
+    } else if (hourNow > 0) {
+        greeting = 'Good morning ';
+    } else greeting = 'Welcome ';
+
 
     Vue.component('item', {
         template: `
     <li id="tasks">
-      {{ date + text }}
+      {{date + text }}
       <button class="gridButton" v-on:click="$emit('remove')">Remove</button>
       <button class="gridButton" v-on:click="$emit('priority')">Make priority</button>
       <button class="gridButton" v-on:click="$emit('notpriority')">Not priority</button>
@@ -112,6 +135,8 @@
             newItemPriorityColor: 'black',
             hide: true,
             today: new Date(),
+            yourName: '',
+            message: 'Welcome',
             items: [
                 {
                     id: 1,
@@ -162,6 +187,14 @@
                 this.newItemDate = null
                 this.newItemPriority = false
                 this.newItemPriorityColor = 'black'
+            },
+            logIn: function () {
+                console.log('LogIn called')
+                console.log("Name entered is: " + this.yourName);
+                if((this.yourName !== null) && (this.yourName !== '')) {
+                    localStorage.setItem('user', this.yourName);
+                    this.message = greeting + this.yourName;
+                }
             },
             prio: function () {
                 if(this.hide === true){
@@ -222,7 +255,7 @@
                 console.log('delete pressed')
                 localStorage.clear()
                 console.log('data deleted')
-            },
+            }
         }
     })
 
